@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bill Master Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;600;700&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ios-blue: #007AFF;
+            --ios-bg: #F2F2F7;
+            --ios-card: #FFFFFF;
+        }
+        body {
+            font-family: 'IBM Plex Sans Thai', 'Inter', sans-serif;
+            background-color: var(--ios-bg);
+            color: #1c1c1e;
+            -webkit-font-smoothing: antialiased;
+        }
+        .ios-card {
+            background: var(--ios-card);
+            border-radius: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 16px;
+        }
+        .ios-input {
+            background: #f2f2f7;
+            border-radius: 12px;
+            padding: 12px 16px;
+            width: 100%;
+            border: none;
+            outline: none;
+            font-size: 16px;
+        }
+        .ios-input:focus {
+            box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.2);
+        }
+        .btn-primary {
+            background: var(--ios-blue);
+            color: white;
+            font-weight: 600;
+            padding: 14px;
+            border-radius: 14px;
+            width: 100%;
+            transition: all 0.2s;
+        }
+        .btn-primary:active {
+            transform: scale(0.97);
+            opacity: 0.9;
+        }
+        .settlement-card {
+            background: white;
+            border-radius: 18px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 0.5px solid #e5e5ea;
+        }
+        .name-badge {
+            background: #e9e9eb;
+            padding: 6px 12px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        /* Custom Checkbox */
+        input[type="checkbox"] {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            accent-color: var(--ios-blue);
+        }
+    </style>
+</head>
+<body class="safe-area-inset">
+    <div class="max-w-md mx-auto p-4 space-y-6">
+        
+        <!-- Header -->
+        <header class="pt-4 pb-2">
+            <h1 class="text-3xl font-black tracking-tight text-gray-900">#ourbills</h1>
+            <p class="text-gray-500 font-medium">ความสนุกมีค่าใช้จ่าย</p>
+        </header>
+
+        <!-- Section 1: Friends -->
+        <div class="ios-card p-5">
+            <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">ใครบ้าง ?</h2>
+            <div class="flex gap-2 mb-4">
+                <input type="text" id="friendName" class="ios-input" placeholder="เพิ่มชื่อเพื่อน...">
+                <button onclick="addFriend()" class="bg-blue-600 text-white w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4" />
+                    </svg>
+                </button>
+            </div>
+            <div id="friendsList" class="flex flex-wrap gap-2"></div>
+        </div>
+
+        <!-- Section 2: Add Bill -->
+        <div class="ios-card p-5">
+            <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">ทำอะไรกันลงไปบ้าง</h2>
+            <div class="space-y-4">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-[11px] font-bold text-gray-400 ml-1">ชื่อรายการ</label>
+                        <input type="text" id="itemName" class="ios-input mt-1" placeholder="เช่น ค่าที่พัก">
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-bold text-gray-400 ml-1">ราคา (฿)</label>
+                        <input type="number" id="itemPrice" class="ios-input mt-1" placeholder="0.00">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-[11px] font-bold text-gray-400 ml-1">ใครจ่ายก่อน ?</label>
+                    <div class="relative mt-1">
+                        <select id="whoPaid" class="ios-input appearance-none bg-no-repeat bg-right pr-10" style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2394a3b8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M6%209l6%206%206-6%22%3E%3C%2Fpath%3E%3C%2Fsvg%3E'); background-position: right 12px center; background-size: 18px;">
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-[11px] font-bold text-gray-400 ml-1">หารด้วยกันกี่คน?</label>
+                    <div id="whoAteOptions" class="grid grid-cols-2 gap-2 mt-2">
+                        <p class="text-xs text-gray-400 italic py-2">กรุณาเพิ่มเพื่อนก่อน</p>
+                    </div>
+                </div>
+
+                <button onclick="addItem()" class="btn-primary mt-2 shadow-xl shadow-blue-100">บันทึกข้อมูล</button>
+            </div>
+        </div>
+
+        <!-- Section 3: Summary Display -->
+        <div id="captureArea" class="bg-white rounded-[32px] p-8 shadow-sm space-y-6">
+            <div class="text-center border-b border-gray-50 pb-6">
+                <h3 class="text-sm font-bold text-blue-600 uppercase tracking-[0.2em] mb-1">summary</h3>
+                <h2 id="summaryTitle" class="text-2xl font-black text-gray-900">โอน !!!</h2>
+                <p id="billDate" class="text-xs text-gray-400 font-medium mt-1"></p>
+            </div>
+
+            <div id="logSummary" class="space-y-2 text-[13px] text-gray-500 max-h-40 overflow-y-auto">
+            </div>
+
+            <div id="finalSettlement" class="space-y-3 pt-2">
+                <div class="text-center py-8 text-gray-300 italic font-medium">ยังไม่มีข้อมูล</div>
+            </div>
+            
+            <div class="text-center pt-4">
+                <p class="text-[10px] text-gray-300 font-bold uppercase tracking-widest">tbm.</p>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="grid grid-cols-2 gap-4 pb-10">
+            <button onclick="saveAsImage()" class="flex flex-col items-center justify-center bg-emerald-500 text-white p-4 rounded-[24px] shadow-lg shadow-emerald-50 transition active:scale-95">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span class="text-xs font-bold">บันทึกรูปภาพ</span>
+            </button>
+            <button onclick="resetAll()" class="flex flex-col items-center justify-center bg-white text-rose-500 p-4 rounded-[24px] border border-rose-100 transition active:scale-95">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                <span class="text-xs font-bold">เริ่มมื้อใหม่</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let friends = [];
+        let items = [];
+
+        function addFriend() {
+            const input = document.getElementById('friendName');
+            const name = input.value.trim();
+            if (name && !friends.includes(name)) {
+                friends.push(name);
+                input.value = '';
+                renderUI();
+            }
+        }
+
+        function renderUI() {
+            const list = document.getElementById('friendsList');
+            list.innerHTML = friends.map(f => `<span class="name-badge text-gray-700 border border-gray-100">${f}</span>`).join('');
+            
+            document.getElementById('whoPaid').innerHTML = friends.map(f => `<option value="${f}">${f}</option>`).join('');
+            
+            const options = document.getElementById('whoAteOptions');
+            options.innerHTML = friends.map(f => `
+                <label class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl cursor-pointer transition active:bg-gray-100">
+                    <input type="checkbox" name="ate" value="${f}" checked>
+                    <span class="text-sm font-semibold text-gray-700">${f}</span>
+                </label>
+            `).join('');
+
+            document.getElementById('billDate').innerText = new Date().toLocaleDateString('th-TH', { 
+                day: 'numeric', month: 'long', year: 'numeric' 
+            });
+        }
+
+        function addItem() {
+            const name = document.getElementById('itemName').value || "ค่าใช้จ่าย";
+            const price = parseFloat(document.getElementById('itemPrice').value);
+            const payer = document.getElementById('whoPaid').value;
+            const consumers = Array.from(document.querySelectorAll('input[name="ate"]:checked')).map(cb => cb.value);
+
+            if (price > 0 && consumers.length > 0 && payer) {
+                items.push({ name, price, payer, consumers });
+                document.getElementById('itemName').value = '';
+                document.getElementById('itemPrice').value = '';
+                updateSettlement();
+            }
+        }
+
+        function updateSettlement() {
+            const balances = {};
+            friends.forEach(f => balances[f] = 0);
+
+            items.forEach(item => {
+                balances[item.payer] += item.price;
+                const perPerson = item.price / item.consumers.length;
+                item.consumers.forEach(f => balances[f] -= perPerson);
+            });
+
+            document.getElementById('logSummary').innerHTML = items.map(i => `
+                <div class="flex justify-between font-medium">
+                    <span>${i.name}</span>
+                    <span class="font-bold text-gray-900">฿ ${i.price.toLocaleString()}</span>
+                </div>
+            `).join('');
+
+            // Debt Simplification Logic
+            let creditors = [], debtors = [];
+            Object.entries(balances).forEach(([name, bal]) => {
+                if (bal > 0.01) creditors.push({ name, amt: bal });
+                else if (bal < -0.01) debtors.push({ name, amt: Math.abs(bal) });
+            });
+
+            let transactions = [];
+            let i = 0, j = 0;
+            while (i < debtors.length && j < creditors.length) {
+                let payAmt = Math.min(debtors[i].amt, creditors[j].amt);
+                transactions.push({ from: debtors[i].name, to: creditors[j].name, amt: payAmt });
+                debtors[i].amt -= payAmt;
+                creditors[j].amt -= payAmt;
+                if (debtors[i].amt < 0.01) i++;
+                if (creditors[j].amt < 0.01) j++;
+            }
+
+            const finalDiv = document.getElementById('finalSettlement');
+            finalDiv.innerHTML = transactions.map(t => `
+                <div class="settlement-card">
+                    <div>
+                        <div class="text-[10px] text-gray-400 font-bold uppercase mb-1">โอนให้</div>
+                        <div class="text-sm font-bold text-gray-800">${t.from} ➜ ${t.to}</div>
+                    </div>
+                    <div class="text-xl font-black text-blue-600">
+                        <span class="text-xs font-bold mr-0.5">฿</span>${t.amt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </div>
+                </div>
+            `).join('') || '<div class="text-center py-8 text-gray-300 italic font-medium">ลงตัวพอดี ไม่มีหนี้ค้าง</div>';
+        }
+
+        async function saveAsImage() {
+            const area = document.getElementById('captureArea');
+            const canvas = await html2canvas(area, { 
+                scale: 3,
+                backgroundColor: "#F2F2F7",
+                borderRadius: 32,
+                logging: false
+            });
+            const link = document.createElement('a');
+            link.download = `Bill-Split-${new Date().getTime()}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        function resetAll() {
+            if(confirm("ต้องการล้างข้อมูลเพื่อเริ่มมื้อใหม่ใช่ไหม?")) {
+                friends = [];
+                items = [];
+                document.getElementById('logSummary').innerHTML = '';
+                renderUI();
+                updateSettlement();
+            }
+        }
+    </script>
+</body>
+</html>
