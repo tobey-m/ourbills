@@ -33,8 +33,10 @@
             border: none;
             outline: none;
             font-size: 16px;
+            transition: all 0.2s;
         }
         .ios-input:focus {
+            background: #e5e5ea;
             box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.2);
         }
         .btn-primary {
@@ -66,74 +68,94 @@
             border-radius: 100px;
             font-size: 13px;
             font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
         }
-        /* Custom Checkbox */
         input[type="checkbox"] {
             width: 22px;
             height: 22px;
             border-radius: 50%;
             accent-color: var(--ios-blue);
         }
+        .history-item {
+            border-bottom: 0.5px solid #f2f2f7;
+            padding: 12px 0;
+        }
+        .history-item:last-child { border-bottom: none; }
+        
+        /* Capture refinement */
+        .capture-mode { padding: 40px !important; background: #F2F2F7 !important; }
+        .capture-mode .no-capture { display: none !important; }
     </style>
 </head>
-<body class="safe-area-inset">
-    <div class="max-w-md mx-auto p-4 space-y-6">
+<body class="safe-area-inset p-4 pb-20">
+    <div class="max-w-md mx-auto space-y-6">
         
-        <!-- Header -->
-        <header class="pt-4 pb-2">
-            <h1 class="text-3xl font-black tracking-tight text-gray-900">#ourbills</h1>
-            <p class="text-gray-500 font-medium">ความสนุกมีค่าใช้จ่าย</p>
+        <header class="pt-4 pb-2 flex justify-between items-end">
+            <div>
+                <h1 class="text-3xl font-black tracking-tight text-gray-900">#ourbills</h1>
+                <p class="text-gray-500 font-medium">ความสนุกมีค่าใช้จ่าย</p>
+            </div>
+            <div class="text-right">
+                <span id="totalBillAmount" class="text-xl font-bold text-blue-600 block leading-none">฿0</span>
+                <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">รวมทั้งหมด</span>
+            </div>
         </header>
 
-        <!-- Section 1: Friends -->
         <div class="ios-card p-5">
             <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">ใครบ้าง ?</h2>
-            <div class="flex gap-2 mb-4">
-                <input type="text" id="friendName" class="ios-input" placeholder="เพิ่มชื่อเพื่อน...">
-                <button onclick="addFriend()" class="bg-blue-600 text-white w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-200">
+            <form onsubmit="event.preventDefault(); addFriend();" class="flex gap-2 mb-4">
+                <input type="text" id="friendName" class="ios-input" placeholder="เพิ่มชื่อเพื่อน..." autocomplete="off">
+                <button type="submit" class="bg-blue-600 text-white w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-200 shrink-0">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4" />
                     </svg>
                 </button>
-            </div>
+            </form>
             <div id="friendsList" class="flex flex-wrap gap-2"></div>
         </div>
 
-        <!-- Section 2: Add Bill -->
-        <div class="ios-card p-5">
-            <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">ทำอะไรกันลงไปบ้าง</h2>
+        <div class="ios-card p-5" id="inputForm">
+            <h2 id="formTitle" class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">ทำอะไรกันลงไปบ้าง</h2>
             <div class="space-y-4">
+                <input type="hidden" id="editIndex" value="-1">
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="text-[11px] font-bold text-gray-400 ml-1">ที่ไหนทำอะไร</label>
-                        <input type="text" id="itemName" class="ios-input mt-1" placeholder="เช่น เบียร์">
+                        <label class="text-[11px] font-bold text-gray-400 ml-1">ที่ไหน ยังไง</label>
+                        <input type="text" id="itemName" class="ios-input mt-1" placeholder="เช่น เบียร์...">
                     </div>
                     <div>
                         <label class="text-[11px] font-bold text-gray-400 ml-1">ราคา</label>
-                        <input type="number" id="itemPrice" class="ios-input mt-1" placeholder="0.00">
+                        <input type="number" id="itemPrice" class="ios-input mt-1" placeholder="0.00" step="any">
                     </div>
                 </div>
 
                 <div>
                     <label class="text-[11px] font-bold text-gray-400 ml-1">ใครจ่ายก่อน ?</label>
-                    <div class="relative mt-1">
-                        <select id="whoPaid" class="ios-input appearance-none bg-no-repeat bg-right pr-10" style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2394a3b8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M6%209l6%206%206-6%22%3E%3C%2Fpath%3E%3C%2Fsvg%3E'); background-position: right 12px center; background-size: 18px;">
-                        </select>
-                    </div>
+                    <select id="whoPaid" class="ios-input mt-1 appearance-none bg-no-repeat bg-right pr-10" style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2394a3b8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M6%209l6%206%206-6%22%3E%3C%2Fpath%3E%3C%2Fsvg%3E'); background-position: right 12px center; background-size: 18px;">
+                    </select>
                 </div>
 
                 <div>
-                    <label class="text-[11px] font-bold text-gray-400 ml-1">หารด้วยกันกี่คน?</label>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="text-[11px] font-bold text-gray-400 ml-1">หารด้วยกันกี่คน?</label>
+                        <div class="flex gap-2">
+                            <button onclick="toggleAllCheckboxes(true)" class="text-[10px] text-blue-500 font-bold uppercase tracking-tight">เลือกทั้งหมด</button>
+                            <span class="text-gray-300">|</span>
+                            <button onclick="toggleAllCheckboxes(false)" class="text-[10px] text-gray-400 font-bold uppercase tracking-tight">ไม่เลือกเลย</button>
+                        </div>
+                    </div>
                     <div id="whoAteOptions" class="grid grid-cols-2 gap-2 mt-2">
-                        <p class="text-xs text-gray-400 italic py-2">กรุณาเพิ่มเพื่อนก่อน</p>
+                        <p class="text-xs text-gray-400 italic py-2 col-span-2">กรุณาเพิ่มเพื่อนก่อน</p>
                     </div>
                 </div>
 
-                <button onclick="addItem()" class="btn-primary mt-2 shadow-xl shadow-blue-100">บันทึกข้อมูล</button>
+                <button id="submitBtn" onclick="addItem()" class="btn-primary mt-2 shadow-xl shadow-blue-100">บันทึกข้อมูล</button>
+                <button id="cancelEditBtn" onclick="resetForm()" class="hidden w-full text-sm text-gray-400 font-bold py-2">ยกเลิกการแก้ไข</button>
             </div>
         </div>
 
-        <!-- Section 3: Summary Display -->
         <div id="captureArea" class="bg-white rounded-[32px] p-8 shadow-sm space-y-6">
             <div class="text-center border-b border-gray-50 pb-6">
                 <h3 class="text-sm font-bold text-blue-600 uppercase tracking-[0.2em] mb-1">summary</h3>
@@ -141,19 +163,18 @@
                 <p id="billDate" class="text-xs text-gray-400 font-medium mt-1"></p>
             </div>
 
-            <div id="logSummary" class="space-y-2 text-[13px] text-gray-500 max-h-40 overflow-y-auto">
-            </div>
+            <div id="logSummary" class="space-y-4 max-h-[300px] overflow-y-auto pr-2">
+                </div>
 
-            <div id="finalSettlement" class="space-y-3 pt-2">
+            <div id="finalSettlement" class="space-y-3 pt-6 border-t border-dashed">
                 <div class="text-center py-8 text-gray-300 italic font-medium">ยังไม่มีข้อมูล</div>
             </div>
             
-            <div class="text-center pt-4">
-                <p class="text-[10px] text-gray-300 font-bold uppercase tracking-widest">tbm.</p>
+            <div class="text-center pt-4 border-t border-gray-50">
+                <p class="text-[9px] text-gray-300 font-bold uppercase tracking-[0.3em]">#tbm</p>
             </div>
         </div>
 
-        <!-- Actions -->
         <div class="grid grid-cols-2 gap-4 pb-10">
             <button onclick="saveAsImage()" class="flex flex-col items-center justify-center bg-emerald-500 text-white p-4 rounded-[24px] shadow-lg shadow-emerald-50 transition active:scale-95">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -171,8 +192,13 @@
     </div>
 
     <script>
-        let friends = [];
-        let items = [];
+        let friends = JSON.parse(localStorage.getItem('ob_friends')) || [];
+        let items = JSON.parse(localStorage.getItem('ob_items')) || [];
+
+        function saveToLocal() {
+            localStorage.setItem('ob_friends', JSON.stringify(friends));
+            localStorage.setItem('ob_items', JSON.stringify(items));
+        }
 
         function addFriend() {
             const input = document.getElementById('friendName');
@@ -180,23 +206,53 @@
             if (name && !friends.includes(name)) {
                 friends.push(name);
                 input.value = '';
+                saveToLocal();
                 renderUI();
+                updateSettlement();
+            } else if(friends.includes(name)) {
+                alert('ชื่อนี้มีอยู่แล้วจ้า');
             }
         }
 
+        function removeFriend(name) {
+            if(confirm(`ลบ ${name} ออกจากกลุ่ม? (รายการที่บันทึกไว้อาจจะคลาดเคลื่อน)`)) {
+                friends = friends.filter(f => f !== name);
+                saveToLocal();
+                renderUI();
+                updateSettlement();
+            }
+        }
+
+        function toggleAllCheckboxes(checked) {
+            document.querySelectorAll('input[name="ate"]').forEach(cb => cb.checked = checked);
+        }
+
         function renderUI() {
-            const list = document.getElementById('friendsList');
-            list.innerHTML = friends.map(f => `<span class="name-badge text-gray-700 border border-gray-100">${f}</span>`).join('');
-            
+            // Render Friends List
+            document.getElementById('friendsList').innerHTML = friends.map(f => `
+                <span class="name-badge text-gray-700 border border-gray-100">
+                    ${f}
+                    <button onclick="removeFriend('${f}')" class="ml-1 text-gray-400 hover:text-rose-500 no-capture">
+                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                    </button>
+                </span>
+            `).join('');
+
+            // Render Select Options
             document.getElementById('whoPaid').innerHTML = friends.map(f => `<option value="${f}">${f}</option>`).join('');
             
+            // Render Checkboxes
             const options = document.getElementById('whoAteOptions');
-            options.innerHTML = friends.map(f => `
-                <label class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl cursor-pointer transition active:bg-gray-100">
-                    <input type="checkbox" name="ate" value="${f}" checked>
-                    <span class="text-sm font-semibold text-gray-700">${f}</span>
-                </label>
-            `).join('');
+            if (friends.length > 0) {
+                options.innerHTML = friends.map(f => `
+                    <label class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl cursor-pointer active:bg-gray-100 transition">
+                        <input type="checkbox" name="ate" value="${f}" checked>
+                        <span class="text-sm font-semibold text-gray-700">${f}</span>
+                    </label>
+                `).join('');
+            } else {
+                options.innerHTML = '<p class="text-xs text-gray-400 italic py-2 col-span-2">กรุณาเพิ่มเพื่อนก่อน</p>';
+            }
 
             document.getElementById('billDate').innerText = new Date().toLocaleDateString('th-TH', { 
                 day: 'numeric', month: 'long', year: 'numeric' 
@@ -204,37 +260,111 @@
         }
 
         function addItem() {
-            const name = document.getElementById('itemName').value || "ค่าใช้จ่าย";
-            const price = parseFloat(document.getElementById('itemPrice').value);
+            const name = document.getElementById('itemName').value.trim() || "ทั่วไป";
+            const priceStr = document.getElementById('itemPrice').value;
+            const price = parseFloat(priceStr);
             const payer = document.getElementById('whoPaid').value;
             const consumers = Array.from(document.querySelectorAll('input[name="ate"]:checked')).map(cb => cb.value);
+            const editIndex = parseInt(document.getElementById('editIndex').value);
 
-            if (price > 0 && consumers.length > 0 && payer) {
+            if (!price || price <= 0) {
+                alert('ใส่ราคาที่ถูกต้องด้วยจ้า');
+                return;
+            }
+            if (consumers.length === 0) {
+                alert('อย่างน้อยต้องมี 1 คนที่หารนะ');
+                return;
+            }
+
+            if (editIndex > -1) {
+                items[editIndex] = { name, price, payer, consumers };
+            } else {
                 items.push({ name, price, payer, consumers });
-                document.getElementById('itemName').value = '';
-                document.getElementById('itemPrice').value = '';
+            }
+            
+            saveToLocal();
+            resetForm();
+            updateSettlement();
+        }
+
+        function editItem(index) {
+            const item = items[index];
+            document.getElementById('itemName').value = item.name;
+            document.getElementById('itemPrice').value = item.price;
+            document.getElementById('whoPaid').value = item.payer;
+            document.getElementById('editIndex').value = index;
+            
+            const checkboxes = document.querySelectorAll('input[name="ate"]');
+            checkboxes.forEach(cb => cb.checked = item.consumers.includes(cb.value));
+
+            document.getElementById('formTitle').innerText = "แก้ไขรายการ";
+            document.getElementById('submitBtn').innerText = "อัปเดตรายการ";
+            document.getElementById('cancelEditBtn').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function deleteItem(index) {
+            if(confirm("ลบรายการนี้ใช่ไหม?")) {
+                items.splice(index, 1);
+                saveToLocal();
                 updateSettlement();
             }
         }
 
+        function resetForm() {
+            document.getElementById('itemName').value = '';
+            document.getElementById('itemPrice').value = '';
+            document.getElementById('editIndex').value = '-1';
+            document.getElementById('formTitle').innerText = "ทำอะไรกันลงไปบ้าง";
+            document.getElementById('submitBtn').innerText = "บันทึกข้อมูล";
+            document.getElementById('cancelEditBtn').classList.add('hidden');
+            toggleAllCheckboxes(true);
+        }
+
         function updateSettlement() {
             const balances = {};
+            let totalSpent = 0;
             friends.forEach(f => balances[f] = 0);
 
+            // Render Log Summary
+            const logDiv = document.getElementById('logSummary');
+            if (items.length === 0) {
+                logDiv.innerHTML = '<p class="text-center py-4 text-gray-300 italic">ยังไม่มีข้อมูลรายการ</p>';
+                document.getElementById('totalBillAmount').innerText = "฿0";
+            } else {
+                logDiv.innerHTML = items.map((i, idx) => {
+                    totalSpent += i.price;
+                    return `
+                        <div class="history-item">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <div class="font-bold text-gray-800">${i.name}</div>
+                                    <div class="text-[10px] text-gray-400">โดย ${i.payer} | หาร ${i.consumers.length} คน</div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="font-bold text-gray-900">฿${i.price.toLocaleString()}</div>
+                                    <div class="flex gap-2 mt-1 justify-end no-capture">
+                                        <button onclick="editItem(${idx})" class="text-[10px] text-blue-500 font-bold">แก้ไข</button>
+                                        <button onclick="deleteItem(${idx})" class="text-[10px] text-rose-400 font-bold">ลบ</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                document.getElementById('totalBillAmount').innerText = `฿${totalSpent.toLocaleString()}`;
+            }
+
+            // Calculate Balances
             items.forEach(item => {
                 balances[item.payer] += item.price;
                 const perPerson = item.price / item.consumers.length;
-                item.consumers.forEach(f => balances[f] -= perPerson);
+                item.consumers.forEach(f => {
+                    if(balances[f] !== undefined) balances[f] -= perPerson;
+                });
             });
 
-            document.getElementById('logSummary').innerHTML = items.map(i => `
-                <div class="flex justify-between font-medium">
-                    <span>${i.name}</span>
-                    <span class="font-bold text-gray-900">฿ ${i.price.toLocaleString()}</span>
-                </div>
-            `).join('');
-
-            // Debt Simplification Logic
+            // Simplify Debts Algorithm
             let creditors = [], debtors = [];
             Object.entries(balances).forEach(([name, bal]) => {
                 if (bal > 0.01) creditors.push({ name, amt: bal });
@@ -243,52 +373,83 @@
 
             let transactions = [];
             let i = 0, j = 0;
-            while (i < debtors.length && j < creditors.length) {
-                let payAmt = Math.min(debtors[i].amt, creditors[j].amt);
-                transactions.push({ from: debtors[i].name, to: creditors[j].name, amt: payAmt });
-                debtors[i].amt -= payAmt;
-                creditors[j].amt -= payAmt;
-                if (debtors[i].amt < 0.01) i++;
-                if (creditors[j].amt < 0.01) j++;
+            let creditorsCopy = creditors.map(c => ({...c}));
+            let debtorsCopy = debtors.map(d => ({...d}));
+
+            while (i < debtorsCopy.length && j < creditorsCopy.length) {
+                let payAmt = Math.min(debtorsCopy[i].amt, creditorsCopy[j].amt);
+                transactions.push({ from: debtorsCopy[i].name, to: creditorsCopy[j].name, amt: payAmt });
+                debtorsCopy[i].amt -= payAmt;
+                creditorsCopy[j].amt -= payAmt;
+                if (debtorsCopy[i].amt < 0.01) i++;
+                if (creditorsCopy[j].amt < 0.01) j++;
             }
 
             const finalDiv = document.getElementById('finalSettlement');
             finalDiv.innerHTML = transactions.map(t => `
                 <div class="settlement-card">
-                    <div>
-                        <div class="text-[10px] text-gray-400 font-bold uppercase mb-1">โอนให้</div>
-                        <div class="text-sm font-bold text-gray-800">${t.from} ➜ ${t.to}</div>
+                    <div class="text-sm font-bold text-gray-800">
+                        <span class="text-rose-500">${t.from}</span> 
+                        <span class="mx-1 text-gray-300">➜</span> 
+                        <span class="text-emerald-600">${t.to}</span>
                     </div>
-                    <div class="text-xl font-black text-blue-600">
-                        <span class="text-xs font-bold mr-0.5">฿</span>${t.amt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </div>
+                    <div class="text-xl font-black text-blue-600 font-[Inter]">฿${t.amt.toLocaleString(undefined, {minimumFractionDigits: 2})}</div>
                 </div>
-            `).join('') || '<div class="text-center py-8 text-gray-300 italic font-medium">ลงตัวพอดี ไม่มีหนี้ค้าง</div>';
+            `).join('') || '<div class="text-center py-8 text-gray-300 italic font-medium">เจ๊ากันพอดี</div>';
         }
 
         async function saveAsImage() {
+            if (items.length === 0) return alert('ใส่ข้อมูลก่อนเซฟนะ');
+            
             const area = document.getElementById('captureArea');
-            const canvas = await html2canvas(area, { 
-                scale: 3,
-                backgroundColor: "#F2F2F7",
-                borderRadius: 32,
-                logging: false
-            });
-            const link = document.createElement('a');
-            link.download = `Bill-Split-${new Date().getTime()}.png`;
-            link.href = canvas.toDataURL('image/png');
-            link.click();
+            const body = document.body;
+            
+            // UI Feedback
+            const btn = event.currentTarget;
+            const originalContent = btn.innerHTML;
+            btn.innerHTML = '<span class="text-xs font-bold animate-pulse">กำลังประมวลผล...</span>';
+            
+            body.classList.add('capture-mode');
+            
+            // Small delay for class rendering
+            await new Promise(r => setTimeout(r, 400));
+
+            try {
+                const canvas = await html2canvas(area, { 
+                    scale: 3,
+                    backgroundColor: "#F2F2F7",
+                    useCORS: true,
+                    logging: false
+                });
+                
+                const link = document.createElement('a');
+                link.download = `ourbills-${new Date().getTime()}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            } catch (err) {
+                console.error(err);
+                alert('เกิดข้อผิดพลาดในการบันทึกรูปภาพ');
+            } finally {
+                body.classList.remove('capture-mode');
+                btn.innerHTML = originalContent;
+            }
         }
 
         function resetAll() {
-            if(confirm("ต้องการล้างข้อมูลเพื่อเริ่มมื้อใหม่ใช่ไหม?")) {
-                friends = [];
-                items = [];
-                document.getElementById('logSummary').innerHTML = '';
-                renderUI();
+            if(confirm("ต้องการล้างข้อมูลทั้งหมดเพื่อเริ่มมื้อใหม่ใช่ไหม? ข้อมูลเดิมจะหายถาวร!")) {
+                friends = []; items = [];
+                saveToLocal();
+                resetForm();
+                renderUI(); 
                 updateSettlement();
             }
         }
+
+        // Init on load
+        window.onload = () => {
+            renderUI();
+            updateSettlement();
+        };
     </script>
 </body>
 </html>
