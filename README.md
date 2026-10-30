@@ -1,18 +1,16 @@
-# ourbills — Minimal iOS Edition
+# #ourbills 3.0 — Minimal / No Account
 
-Static site พร้อม Deploy บน Vercel ไม่มีขั้นตอน build และไม่ต้องตั้ง environment variables
+Static PWA for Vercel. Upload all files to the root of a GitHub repository, import in Vercel, choose Framework Preset: Other, and deploy. Open in Safari on iPhone and choose Share → Add to Home Screen.
 
-## Deploy
-1. แตก ZIP แล้วอัปโหลด **ไฟล์ทั้งหมดภายในโฟลเดอร์นี้** ไปยัง root ของ GitHub repository
-2. Vercel → Add New Project → Import repository → Framework Preset: Other → Deploy
-3. เปิด URL HTTPS บน Safari iPhone → Share → Add to Home Screen
+## Features
+- Existing v2 bills, people, equal/custom/percent/later splits, settlements and share summaries retained
+- Bill Inbox: multi-photo upload, shop, place, date, amount, note, search and pending/cleared statuses
+- Photo storage in IndexedDB (compressed), bill metadata in localStorage; no server or login
+- Convert inbox item to bill expense; original inbox receipt retained
+- Full JSON backup including inbox photos, restore v2/v3, clear local data
 
-## ไฟล์ไอคอน
-- `icon.svg` ต้นฉบับเวกเตอร์ minimal
-- `apple-touch-icon.png` 180×180 สำหรับ iPhone
-- `icon-192.png`, `icon-512.png` และ `icon-maskable.png` สำหรับ PWA
-
-## ข้อควรทราบ
-ข้อมูลเก็บใน localStorage ของเบราว์เซอร์/อุปกรณ์นั้นเท่านั้น ยังไม่ซิงก์ข้ามเครื่อง และไม่มี OCR โปรด Export JSON สำรองข้อมูลสม่ำเสมอ
-
-ไฟล์เวอร์ชันนี้ใช้ key ข้อมูลเดิม `ourbills_v2_data` เพื่อรักษาข้อมูลของ ourbills 2.0 บน origin เดิม
+## Important
+- Browser storage is device-local and may be deleted by browser or user. Export a backup regularly.
+- Sharing a bill shares a summary, not a live synchronized bill.
+- Online OCR, cloud sync, and shared editable links are intentionally not included.
+- IndexedDB availability and storage quota depend on the browser.
