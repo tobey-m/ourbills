@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import {amountCents,equalShares,balances,transfers,receiptCandidates,esc} from '../shared-core.mjs';
+assert.equal(amountCents('1,234.56'),123456);
+assert.throws(()=>amountCents('1.001'));assert.throws(()=>amountCents('-2'));assert.throws(()=>amountCents('Infinity'));
+assert.deepEqual(equalShares(10000,['a','b','c']),{a:3334,b:3333,c:3333});
+const members=[{user_id:'a'},{user_id:'b'}];
+const entries=[{payer_id:'a',amount_cents:80000,shares:{a:40000,b:40000}},{payer_id:'b',amount_cents:20000,shares:{a:10000,b:10000}}];
+assert.deepEqual(transfers(balances(members,entries,[])),[{from:'b',to:'a',amount:30000}]);
+const settled=[{from_id:'b',to_id:'a',amount_cents:30000}];assert.deepEqual(transfers(balances(members,entries,settled)),[]);
+const adjusted=structuredClone(entries);adjusted[0].amount_cents=100000;adjusted[0].shares={a:50000,b:50000};assert.deepEqual(transfers(balances(members,adjusted,settled)),[{from:'b',to:'a',amount:10000}]);
+assert.equal(receiptCandidates('Subtotal 750.00\nGrand total 800.00\nCash tendered 1000.00\nChange 200.00')[0],80000);
+assert.equal(receiptCandidates('ภาษี 52.33\nรวมสุทธิ 1,234.56\nเงินทอน 65.44')[0],123456);
+assert.equal(esc('<img onerror="x">'),'&lt;img onerror=&quot;x&quot;&gt;');
+console.log('PASS: exact cents, 3-person rounding, alternating payers, settlement, post-settlement edit, Thai/English OCR amount priority, escaping.');

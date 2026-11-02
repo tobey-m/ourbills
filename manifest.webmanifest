@@ -1,13 +1,13 @@
 {
   "name": "ourbills — ความสนุกมีค่าใช้จ่าย",
   "short_name": "ourbills",
-  "description": "หารเงินกับแฟนและเพื่อน บันทึกก่อน ค่อยเคลียร์ทีหลัง",
+  "description": "หารครั้งเดียว หรือเปิดสมุดบิลร่วม สลับกันจ่ายแล้วเคลียร์ยอด",
   "lang": "th",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#F8F6EF",
-  "theme_color": "#F8F6EF",
+  "background_color": "#171918",
+  "theme_color": "#171918",
   "icons": [
     {
       "src": "icon-192.png",
