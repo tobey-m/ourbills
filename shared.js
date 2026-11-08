@@ -56,7 +56,7 @@ function importDialog(){
 }
 function legacyCents(n){if(typeof n!=='number'&&typeof n!=='string')throw Error('ยอดเงินไม่ถูกต้อง');return amountCents(String(n))}
 async function legacyId(prefix,id){const bytes=new TextEncoder().encode('ourbills-migrate:'+active+':'+prefix+':'+id);const h=new Uint8Array(await crypto.subtle.digest('SHA-256',bytes));h[6]=(h[6]&15)|64;h[8]=(h[8]&63)|128;const x=[...h.slice(0,16)].map(n=>n.toString(16).padStart(2,'0')).join('');return [x.slice(0,8),x.slice(8,12),x.slice(12,16),x.slice(16,20),x.slice(20)].join('-')}
-function legacyDate(v){const s=String(v||today()).slice(0,10);if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(s)||Number.isNaN(Date.parse(s)))throw Error('วันที่ในไฟล์ไม่ถูกต้อง');return s}
+function legacyDate(v){const s=String(v||today()).slice(0,10);if(!/^\d{4}-\d{2}-\d{2}$/.test(s)||Number.isNaN(Date.parse(s)))throw Error('วันที่ในไฟล์ไม่ถูกต้อง');return s}
 async function readLegacy(file){
  if(!file||file.size>25*1024*1024)throw Error('ไฟล์ต้องไม่เกิน 25 MB');
  const raw=JSON.parse(await file.text());const d=raw.format==='ourbills-v3'?raw.state:raw;
