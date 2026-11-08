@@ -77,7 +77,7 @@ async function readLegacy(file){
 }
 async function legacyReceipt(value,id){
  if(!value)return null;
- if(typeof value!=='string'||!/^data:image\\/(png|jpeg|webp);base64,/.test(value))throw Error('รูปสลิปเก่าบางรูปไม่ใช่รูปแบบที่รองรับ กรุณาเก็บไฟล์ Backup ไว้');
+ if(typeof value!=='string'||!/^data:image\/(png|jpeg|webp);base64,/.test(value))throw Error('รูปสลิปเก่าบางรูปไม่ใช่รูปแบบที่รองรับ กรุณาเก็บไฟล์ Backup ไว้');
  const blob=await (await fetch(value)).blob();
  const file=new File([blob],'legacy.jpg',{type:blob.type});
  const jpg=await compress(file);
